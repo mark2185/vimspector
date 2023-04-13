@@ -448,22 +448,30 @@ def Confirm( api_prefix,
         keys )
 
 
-def AppendToBuffer( buf, line_or_lines, modified=False ):
+def AppendToBuffer( buf, line_or_lines, modified=False, separate_into_lines=False ):
   line = 1
+  if not line_or_lines:
+    if not modified:
+      buf.options[ 'modified' ] = False
+    return line
+
   try:
     # After clearing the buffer (using buf[:] = None) there is always a single
     # empty line in the buffer object and no "is empty" method.
     if len( buf ) > 1 or buf[ 0 ]:
       line = len( buf ) + 1
-      # append string as-is to the last line
-      if isinstance( line_or_lines, str ):
-        buf[ -1 ] += line_or_lines
+      if separate_into_lines:
+          buf.append( line_or_lines )
       else:
-        # the input was obviously split by newline
-        # so only the first element needs to be appended to the last line
-        # the rest get their own lines
-        buf[ -1 ] += line_or_lines[ 0 ]
-        buf.append( line_or_lines[ 1: ] )
+        # append string as-is to the last line
+        if isinstance( line_or_lines, str ):
+            buf[ -1 ] += line_or_lines
+        else:
+            # the input was obviously split by newline
+            # so only the first element needs to be appended to the last line
+            # the rest get their own lines
+            buf[ -1 ] += line_or_lines[ 0 ]
+            buf.append( line_or_lines[ 1: ] )
     elif isinstance( line_or_lines, str ):
       line = 1
       buf[ -1 ] = line_or_lines
