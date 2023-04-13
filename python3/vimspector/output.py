@@ -73,7 +73,7 @@ class OutputView( object ):
 
   def OnOutput( self, event ):
     category = CategoryToBuffer( event.get( 'category' ) or 'output' )
-    text_lines = event[ 'output' ].splitlines()
+    text_lines = event[ 'output' ].split( '\n' ) # splitlines removes trailing newlines
     if 'data' in event:
       text_lines.extend( json.dumps( event[ 'data' ],
                                      indent = 2 ).splitlines() )

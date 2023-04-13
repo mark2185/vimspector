@@ -455,7 +455,15 @@ def AppendToBuffer( buf, line_or_lines, modified=False ):
     # empty line in the buffer object and no "is empty" method.
     if len( buf ) > 1 or buf[ 0 ]:
       line = len( buf ) + 1
-      buf.append( line_or_lines )
+      # append string as-is to the last line
+      if isinstance( line_or_lines, str ):
+        buf[ -1 ] += line_or_lines
+      else:
+        # the input was obviously split by newline
+        # so only the first element needs to be appended to the last line
+        # the rest get their own lines
+        buf[ -1 ] += line_or_lines[ 0 ]
+        buf.append( line_or_lines[ 1: ] )
     elif isinstance( line_or_lines, str ):
       line = 1
       buf[ -1 ] = line_or_lines
